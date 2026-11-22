@@ -38,35 +38,39 @@ Prerequisites: Python 3.10+, Node.js 18+, a Supabase project (see below).
 
 The model weights (`resnet50_finetuned.h5`, about 162 MB) are not in Git. Place the file at `ml-service/model/resnet50_finetuned.h5`.
 
-Start each service in its own terminal.
-
-**1. ML service**
+**One-time setup**
 
 ```bash
+# ML service
 cd ml-service
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port 8000
-```
+cd ..
 
-**2. API**
-
-```bash
+# API
 cd backend
 npm install
 cp .env.example .env   # then fill in the Supabase values
-npm run dev
-```
+cd ..
 
-**3. Frontend**
-
-```bash
+# Frontend (built once; the API serves it)
 cd frontend
 npm install
-npm run dev
+npm run build
+cd ..
 ```
 
-Open http://localhost:5173.
+**Start everything with one command**
+
+```bash
+./start-demo.sh
+```
+
+This starts the ML service, waits until the model has loaded, then starts the API, which also serves the web app. Open http://localhost:4001. Press Ctrl+C to stop everything. Logs from the ML service are written to `logs/ml-service.log`.
+
+**Development mode (hot reload)**
+
+Run `npm run dev` in `backend/` and in `frontend/` (the frontend proxies `/api` to the API), and start the ML service as `uvicorn app:app --port 8000` from `ml-service/`. The frontend is then at http://localhost:5173.
 
 ### Environment variables (`backend/.env`)
 
