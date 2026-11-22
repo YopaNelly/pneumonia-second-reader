@@ -63,6 +63,11 @@ export default function Login() {
             </button>
           }
         />
+        <div className="text-right text-sm">
+          <Link to="/forgot-password" className="text-sky-300 hover:text-sky-200">
+            Forgot password?
+          </Link>
+        </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}

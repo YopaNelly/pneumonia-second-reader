@@ -5,10 +5,13 @@ import Splash from "./pages/Splash.jsx";
 import Welcome from "./pages/Welcome.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Analyze from "./pages/Analyze.jsx";
 import History from "./pages/History.jsx";
 import CaseDetail from "./pages/CaseDetail.jsx";
+import Profile from "./pages/Profile.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
@@ -18,6 +21,8 @@ export default function App() {
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
@@ -25,6 +30,7 @@ export default function App() {
           <Route path="/analyze" element={<Analyze />} />
           <Route path="/history" element={<History />} />
           <Route path="/history/:id" element={<CaseDetail />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
 
