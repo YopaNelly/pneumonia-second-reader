@@ -13,8 +13,10 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Analyze from "./pages/Analyze.jsx";
 import History from "./pages/History.jsx";
 import CaseDetail from "./pages/CaseDetail.jsx";
+import CaseReport from "./pages/CaseReport.jsx";
 import ReviewQueue from "./pages/ReviewQueue.jsx";
 import ReviewCase from "./pages/ReviewCase.jsx";
+import Reports from "./pages/Reports.jsx";
 import Profile from "./pages/Profile.jsx";
 import Settings from "./pages/Settings.jsx";
 import SystemHealth from "./pages/SystemHealth.jsx";
@@ -38,6 +40,7 @@ export default function App() {
           <Route path="/analyze" element={<Analyze />} />
           <Route path="/history" element={<History />} />
           <Route path="/history/:id" element={<CaseDetail />} />
+          <Route path="/history/:id/report" element={<CaseReport />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/system" element={<SystemHealth />} />
@@ -45,6 +48,7 @@ export default function App() {
           <Route element={<RoleRoute roles={["clinician", "admin"]} />}>
             <Route path="/review" element={<ReviewQueue />} />
             <Route path="/review/:id" element={<ReviewCase />} />
+            <Route path="/reports" element={<Reports />} />
           </Route>
         </Route>
       </Route>

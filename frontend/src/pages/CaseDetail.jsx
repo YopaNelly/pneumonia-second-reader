@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Loader2, Trash2 } from "lucide-react";
 import { api } from "../lib/api.js";
 import { useToast } from "../lib/toast.jsx";
 import { LabelBadge, Ring, Skeleton, fmtDate } from "../components/ui.jsx";
@@ -146,6 +146,13 @@ export default function CaseDetail() {
               influenced the model and does not localize disease.
             </p>
           </div>
+
+          <Link
+            to={`/history/${id}/report`}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 text-sm transition hover:bg-white/15"
+            >
+              <FileText size={16} /> Open printable report
+            </Link>
 
           <button
             onClick={() => setConfirming(true)}

@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
+  BarChart3,
   ClipboardCheck,
   HeartPulse,
   History as HistoryIcon,
@@ -23,6 +24,7 @@ const items = [
   { to: "/analyze", label: "Analyze", icon: ScanSearch, mobile: true },
   { to: "/history", label: "History", icon: HistoryIcon, mobile: true },
   { to: "/review", label: "Review", icon: ClipboardCheck, mobile: true, roles: ["clinician", "admin"] },
+  { to: "/reports", label: "Reports", icon: BarChart3, mobile: false, roles: ["clinician", "admin"] },
   { to: "/profile", label: "Profile", icon: User, mobile: true },
   { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: false },
   { to: "/system", label: "System", icon: Activity, mobile: false },
