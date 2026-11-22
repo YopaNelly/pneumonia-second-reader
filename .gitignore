@@ -37,3 +37,6 @@ logs/
 
 # ===== Local dataset samples (regenerate via Kaggle API) =====
 research/dataset/
+
+# ===== Exported training data (never commit patient images) =====
+dataset-export/
