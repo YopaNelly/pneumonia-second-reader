@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
-import { ProtectedRoute } from "./lib/auth.jsx";
+import { ProtectedRoute, RoleRoute } from "./lib/auth.jsx";
 import Splash from "./pages/Splash.jsx";
 import Welcome from "./pages/Welcome.jsx";
 import Login from "./pages/Login.jsx";
@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Analyze from "./pages/Analyze.jsx";
 import History from "./pages/History.jsx";
 import CaseDetail from "./pages/CaseDetail.jsx";
+import ReviewQueue from "./pages/ReviewQueue.jsx";
+import ReviewCase from "./pages/ReviewCase.jsx";
 import Profile from "./pages/Profile.jsx";
 import Settings from "./pages/Settings.jsx";
 import SystemHealth from "./pages/SystemHealth.jsx";
@@ -39,6 +41,11 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/system" element={<SystemHealth />} />
+
+          <Route element={<RoleRoute roles={["clinician", "admin"]} />}>
+            <Route path="/review" element={<ReviewQueue />} />
+            <Route path="/review/:id" element={<ReviewCase />} />
+          </Route>
         </Route>
       </Route>
 

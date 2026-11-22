@@ -7,6 +7,7 @@ const { health } = require("./mlClient");
 const { requireAuth } = require("./auth");
 const predictRoute = require("./routes/predict");
 const historyRoute = require("./routes/history");
+const reviewRoute = require("./routes/review");
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
@@ -21,8 +22,13 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+app.get("/api/me", requireAuth, (req, res) => {
+  res.json({ id: req.user.id, email: req.user.email, role: req.role });
+});
+
 app.use("/api/predict", predictRoute);
 app.use("/api/history", requireAuth, historyRoute);
+app.use("/api/review", reviewRoute);
 
 // Serve the built React app (run `npm run build` in frontend/ first)
 const dist = path.join(__dirname, "..", "..", "frontend", "dist");

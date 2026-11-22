@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
+  ClipboardCheck,
   HeartPulse,
   History as HistoryIcon,
   LayoutDashboard,
@@ -21,8 +22,9 @@ const items = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, mobile: true },
   { to: "/analyze", label: "Analyze", icon: ScanSearch, mobile: true },
   { to: "/history", label: "History", icon: HistoryIcon, mobile: true },
+  { to: "/review", label: "Review", icon: ClipboardCheck, mobile: true, roles: ["clinician", "admin"] },
   { to: "/profile", label: "Profile", icon: User, mobile: true },
-  { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: true },
+  { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: false },
   { to: "/system", label: "System", icon: Activity, mobile: false },
 ];
 
@@ -52,12 +54,13 @@ function NavItem({ to, label, icon: Icon, compact }) {
 
 export default function Layout() {
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { settings } = useSettings();
   const navigate = useNavigate();
   const toast = useToast();
   const [confirmOut, setConfirmOut] = useState(false);
   const name = user?.user_metadata?.full_name || user?.email || "";
+  const nav = items.filter((i) => !i.roles || i.roles.includes(role));
 
   useEffect(() => {
     if (!settings.autoLogout) return;
@@ -101,7 +104,7 @@ export default function Layout() {
           </div>
         </div>
 
-        {items.map((i) => (
+        {nav.map((i) => (
           <NavItem key={i.to} {...i} />
         ))}
 
@@ -110,7 +113,10 @@ export default function Layout() {
             <div className="btn-primary grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm">
               {name.charAt(0).toUpperCase()}
             </div>
-            <p className="truncate text-sm">{name}</p>
+            <div className="min-w-0">
+              <p className="truncate text-sm">{name}</p>
+              {role && <p className="text-xs capitalize text-[var(--muted)]">{role}</p>}
+            </div>
           </div>
           <button
             onClick={() => setConfirmOut(true)}
@@ -123,7 +129,10 @@ export default function Layout() {
       </aside>
 
       <main className="relative z-10 md:pl-64">
-        <div className="flex justify-end px-4 pt-4 md:hidden">
+        <div className="flex justify-end gap-2 px-4 pt-4 md:hidden">
+          <Link to="/settings" className="glass flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--muted)]">
+            <SettingsIcon size={14} /> Settings
+          </Link>
           <button
             onClick={() => setConfirmOut(true)}
             className="glass flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--muted)]"
@@ -143,7 +152,7 @@ export default function Layout() {
       </main>
 
       <nav className="glass fixed inset-x-3 bottom-3 z-20 flex justify-around p-1 md:hidden">
-        {items
+        {nav
           .filter((i) => i.mobile)
           .map((i) => (
             <NavItem key={i.to} {...i} compact />
