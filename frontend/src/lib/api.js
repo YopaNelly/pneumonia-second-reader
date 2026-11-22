@@ -6,7 +6,7 @@ const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export const configured = Boolean(url && key);
 export const supabase = createClient(url || "http://localhost:9", key || "missing-key");
 
-const BASE = import.meta.env.VITE_API_URL || "";
+export const BASE = import.meta.env.VITE_API_URL || "";
 
 export async function api(path, options = {}) {
   const { data } = await supabase.auth.getSession();
@@ -24,6 +24,7 @@ export async function api(path, options = {}) {
   const body = await res.json().catch(() => ({}));
   if (res.status === 401) {
     await supabase.auth.signOut();
+    window.location.assign("/session-expired");
     throw new Error(body.error || "Session expired. Please sign in again.");
   }
   if (!res.ok) throw new Error(body.error || "Request failed");

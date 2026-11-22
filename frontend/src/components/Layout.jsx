@@ -1,17 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { HeartPulse, History as HistoryIcon, LayoutDashboard, LogOut, ScanSearch, User } from "lucide-react";
+import {
+  Activity,
+  HeartPulse,
+  History as HistoryIcon,
+  LayoutDashboard,
+  LogOut,
+  ScanSearch,
+  Settings as SettingsIcon,
+  User,
+} from "lucide-react";
 import { supabase } from "../lib/api.js";
 import { useAuth } from "../lib/auth.jsx";
+import { useSettings } from "../lib/settings.jsx";
 import { useToast } from "../lib/toast.jsx";
 import { Background } from "./ui.jsx";
 
 const items = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/analyze", label: "Analyze", icon: ScanSearch },
-  { to: "/history", label: "History", icon: HistoryIcon },
-  { to: "/profile", label: "Profile", icon: User },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, mobile: true },
+  { to: "/analyze", label: "Analyze", icon: ScanSearch, mobile: true },
+  { to: "/history", label: "History", icon: HistoryIcon, mobile: true },
+  { to: "/profile", label: "Profile", icon: User, mobile: true },
+  { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: true },
+  { to: "/system", label: "System", icon: Activity, mobile: false },
 ];
 
 function NavItem({ to, label, icon: Icon, compact }) {
@@ -20,7 +32,7 @@ function NavItem({ to, label, icon: Icon, compact }) {
       {({ isActive }) => (
         <div
           className={`relative flex items-center rounded-xl transition ${
-            compact ? "flex-col gap-1 px-3 py-2 text-xs" : "gap-3 px-4 py-3"
+            compact ? "flex-col gap-1 px-2.5 py-2 text-[11px]" : "gap-3 px-4 py-3"
           } ${isActive ? "text-white" : "text-[var(--muted)] hover:text-white"}`}
         >
           {isActive && (
@@ -41,10 +53,31 @@ function NavItem({ to, label, icon: Icon, compact }) {
 export default function Layout() {
   const { pathname } = useLocation();
   const { user } = useAuth();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const toast = useToast();
   const [confirmOut, setConfirmOut] = useState(false);
   const name = user?.user_metadata?.full_name || user?.email || "";
+
+  useEffect(() => {
+    if (!settings.autoLogout) return;
+    const ms = settings.autoLogout * 60 * 1000;
+    let timer;
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        await supabase.auth.signOut();
+        window.location.assign("/session-expired");
+      }, ms);
+    };
+    const events = ["mousemove", "keydown", "click", "touchstart"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [settings.autoLogout]);
 
   async function logout() {
     await supabase.auth.signOut();
@@ -110,9 +143,11 @@ export default function Layout() {
       </main>
 
       <nav className="glass fixed inset-x-3 bottom-3 z-20 flex justify-around p-1 md:hidden">
-        {items.map((i) => (
-          <NavItem key={i.to} {...i} compact />
-        ))}
+        {items
+          .filter((i) => i.mobile)
+          .map((i) => (
+            <NavItem key={i.to} {...i} compact />
+          ))}
       </nav>
 
       <AnimatePresence>

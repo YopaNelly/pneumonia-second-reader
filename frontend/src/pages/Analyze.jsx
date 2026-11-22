@@ -4,17 +4,19 @@ import { Link } from "react-router-dom";
 import { AlertTriangle, Flame, ImageUp, Loader2, RotateCcw } from "lucide-react";
 import { api } from "../lib/api.js";
 import { useToast } from "../lib/toast.jsx";
+import { useSettings } from "../lib/settings.jsx";
 import { PageHeader, Ring } from "../components/ui.jsx";
 
 export default function Analyze() {
   const toast = useToast();
+  const { settings } = useSettings();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
-  const [save, setSave] = useState(true);
+  const [save, setSave] = useState(settings.saveByDefault);
   const [consent, setConsent] = useState(false);
   const [showHeat, setShowHeat] = useState(true);
 

@@ -7,11 +7,15 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import SessionExpired from "./pages/SessionExpired.jsx";
+import AccessDenied from "./pages/AccessDenied.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Analyze from "./pages/Analyze.jsx";
 import History from "./pages/History.jsx";
 import CaseDetail from "./pages/CaseDetail.jsx";
 import Profile from "./pages/Profile.jsx";
+import Settings from "./pages/Settings.jsx";
+import SystemHealth from "./pages/SystemHealth.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
@@ -23,6 +27,8 @@ export default function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/session-expired" element={<SessionExpired />} />
+      <Route path="/access-denied" element={<AccessDenied />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
@@ -31,6 +37,8 @@ export default function App() {
           <Route path="/history" element={<History />} />
           <Route path="/history/:id" element={<CaseDetail />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/system" element={<SystemHealth />} />
         </Route>
       </Route>
 

@@ -108,3 +108,8 @@ body {
   box-shadow: 0 0 18px var(--brand);
   animation: scan 1.6s ease-in-out infinite alternate;
 }
+
+.reduce-motion .blob,
+.reduce-motion .scan-line {
+  animation: none;
+}
