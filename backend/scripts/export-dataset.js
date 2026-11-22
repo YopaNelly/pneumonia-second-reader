@@ -30,6 +30,7 @@ async function main() {
     .from("predictions")
     .select("*")
     .not("confirmed_label", "is", null)
+    .eq("consent", true)
     .order("created_at");
   if (error) throw error;
 

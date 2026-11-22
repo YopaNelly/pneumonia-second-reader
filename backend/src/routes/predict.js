@@ -1,10 +1,10 @@
 const express = require("express");
 const multer = require("multer");
 const { predict } = require("../mlClient");
+const { saveRecord } = require("../store");
+const { requireAuth } = require("../auth");
 
 const router = express.Router();
-
-const { saveRecord } = require("../store");
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -17,7 +17,7 @@ const upload = multer({
   },
 });
 
-router.post("/", upload.single("file"), async (req, res, next) => {
+router.post("/", requireAuth, upload.single("file"), async (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ error: "No image uploaded. Send it in the 'file' field." });
   }
@@ -25,9 +25,14 @@ router.post("/", upload.single("file"), async (req, res, next) => {
     const result = await predict(req.file.buffer, req.file.originalname, req.file.mimetype);
 
     let storage = { stored: false };
-    if (req.body.consent === "true") {
+    if (req.body.save === "true") {
       try {
-        const rec = await saveRecord({ buffer: req.file.buffer, result });
+        const rec = await saveRecord({
+          buffer: req.file.buffer,
+          result,
+          userId: req.user.id,
+          trainingConsent: req.body.consent === "true",
+        });
         storage = { stored: true, record_id: rec.id, duplicate: rec.duplicate };
       } catch (e) {
         console.error("Storing failed:", e.message);

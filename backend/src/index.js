@@ -4,7 +4,9 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const { health } = require("./mlClient");
+const { requireAuth } = require("./auth");
 const predictRoute = require("./routes/predict");
+const historyRoute = require("./routes/history");
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
@@ -20,6 +22,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 app.use("/api/predict", predictRoute);
+app.use("/api/history", requireAuth, historyRoute);
 
 // Serve the built React app (run `npm run build` in frontend/ first)
 const dist = path.join(__dirname, "..", "..", "frontend", "dist");
@@ -38,7 +41,7 @@ app.use((err, req, res, next) => {
   if (err.cause && err.cause.code === "ECONNREFUSED") return res.status(503).json({ error: "ML service is unreachable" });
   const status = err.status || 500;
   if (status >= 500) console.error(err.message);
-  res.status(status).json({ error: status >= 500 ? "Prediction failed" : err.message });
+  res.status(status).json({ error: status >= 500 ? "Request failed" : err.message });
 });
 
 const port = process.env.PORT || 4001;
