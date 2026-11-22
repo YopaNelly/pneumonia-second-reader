@@ -1,4 +1,6 @@
 require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const { health } = require("./mlClient");
@@ -19,6 +21,18 @@ app.get("/api/health", async (req, res) => {
 
 app.use("/api/predict", predictRoute);
 
+// Serve the built React app (run `npm run build` in frontend/ first)
+const dist = path.join(__dirname, "..", "..", "frontend", "dist");
+if (fs.existsSync(dist)) {
+  app.use(express.static(dist));
+  app.use((req, res, next) => {
+    if (req.method === "GET" && !req.path.startsWith("/api")) {
+      return res.sendFile(path.join(dist, "index.html"));
+    }
+    next();
+  });
+}
+
 app.use((err, req, res, next) => {
   if (err.code === "LIMIT_FILE_SIZE") return res.status(413).json({ error: "Image is larger than 10 MB" });
   if (err.cause && err.cause.code === "ECONNREFUSED") return res.status(503).json({ error: "ML service is unreachable" });
@@ -27,5 +41,5 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: status >= 500 ? "Prediction failed" : err.message });
 });
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4001;
 app.listen(port, () => console.log(`API listening on http://localhost:${port}`));

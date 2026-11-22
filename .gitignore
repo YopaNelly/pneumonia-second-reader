@@ -40,3 +40,4 @@ research/dataset/
 
 # ===== Exported training data (never commit patient images) =====
 dataset-export/
+logs/
