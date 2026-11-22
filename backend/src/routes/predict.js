@@ -4,6 +4,8 @@ const { predict } = require("../mlClient");
 
 const router = express.Router();
 
+const { saveRecord } = require("../store");
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -21,7 +23,18 @@ router.post("/", upload.single("file"), async (req, res, next) => {
   }
   try {
     const result = await predict(req.file.buffer, req.file.originalname, req.file.mimetype);
-    res.json(result);
+
+    let storage = { stored: false };
+    if (req.body.consent === "true") {
+      try {
+        const rec = await saveRecord({ buffer: req.file.buffer, result });
+        storage = { stored: true, record_id: rec.id, duplicate: rec.duplicate };
+      } catch (e) {
+        console.error("Storing failed:", e.message);
+      }
+    }
+
+    res.json({ ...result, ...storage });
   } catch (err) {
     next(err);
   }

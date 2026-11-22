@@ -9,6 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   useEffect(() => {
     if (!file) {
@@ -23,6 +24,7 @@ export default function App() {
   function handleFile(f) {
     setResult(null);
     setError("");
+    setConsent(false);
     if (!f) return;
     if (!["image/jpeg", "image/png"].includes(f.type)) {
       setError("Please choose a JPEG or PNG image.");
@@ -42,6 +44,7 @@ export default function App() {
     setResult(null);
     const form = new FormData();
     form.append("file", file);
+    form.append("consent", consent ? "true" : "false");
     try {
       const res = await fetch(`${API_URL}/api/predict`, { method: "POST", body: form });
       const data = await res.json();
@@ -135,6 +138,20 @@ export default function App() {
               )}
             </div>
 
+            <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                I am authorized to share this image and allow it to be stored, without any
+                patient identity, to improve the model. If unchecked, the image is analyzed
+                and not saved.
+              </span>
+            </label>
+
             <button
               onClick={analyze}
               disabled={loading}
@@ -173,6 +190,11 @@ export default function App() {
                 <dd className="font-medium">{result.threshold}</dd>
               </div>
             </dl>
+            <p className="mt-3 text-xs text-slate-500">
+              {result.stored
+                ? "Image stored for model improvement (pending clinician review)."
+                : "Image not stored."}
+            </p>
             <p className="mt-4 text-xs text-slate-500">
               This output is a second opinion to support, not replace, clinical judgment.
               The heatmap shows what influenced the model and does not localize disease.
