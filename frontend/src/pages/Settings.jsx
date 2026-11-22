@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Activity, ChevronRight, Clock, Save, Sparkles } from "lucide-react";
 import { PageHeader } from "../components/ui.jsx";
+import AboutLinks from "../components/AboutLinks.jsx";
 import { useSettings } from "../lib/settings.jsx";
 import { useToast } from "../lib/toast.jsx";
 
@@ -79,6 +80,8 @@ export default function Settings() {
           <Toggle checked={settings.reduceMotion} onChange={(v) => change({ reduceMotion: v }, "Preference saved")} />
         </Row>
       </motion.div>
+
+      <AboutLinks />
 
       <Link to="/system">
         <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="glass glow-card mt-5 flex items-center justify-between p-5">

@@ -20,6 +20,8 @@ import Reports from "./pages/Reports.jsx";
 import Profile from "./pages/Profile.jsx";
 import Settings from "./pages/Settings.jsx";
 import SystemHealth from "./pages/SystemHealth.jsx";
+import ModelCard from "./pages/ModelCard.jsx";
+import Privacy from "./pages/Privacy.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
@@ -44,6 +46,8 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/system" element={<SystemHealth />} />
+          <Route path="/model-card" element={<ModelCard />} />
+          <Route path="/privacy" element={<Privacy />} />
 
           <Route element={<RoleRoute roles={["clinician", "admin"]} />}>
             <Route path="/review" element={<ReviewQueue />} />
