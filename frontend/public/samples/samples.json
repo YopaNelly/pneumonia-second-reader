@@ -1,0 +1,32 @@
+[
+  {
+    "file": "sample-1.jpeg",
+    "label": "PNEUMONIA",
+    "kind": "Bacterial pneumonia"
+  },
+  {
+    "file": "sample-2.jpeg",
+    "label": "NORMAL",
+    "kind": "Normal"
+  },
+  {
+    "file": "sample-3.jpeg",
+    "label": "PNEUMONIA",
+    "kind": "Bacterial pneumonia"
+  },
+  {
+    "file": "sample-4.jpeg",
+    "label": "NORMAL",
+    "kind": "Normal"
+  },
+  {
+    "file": "sample-5.jpeg",
+    "label": "NORMAL",
+    "kind": "Normal"
+  },
+  {
+    "file": "sample-6.jpeg",
+    "label": "NORMAL",
+    "kind": "Normal"
+  }
+]

@@ -267,3 +267,11 @@ Each page is one file in `frontend/src/pages/`, and the route list lives in `fro
 ## Status
 
 Working prototype. TechAscend Track A capstone.
+
+## Sample images and attribution
+
+The Analyze page includes a gallery of sample X-rays (`frontend/public/samples/`) so anyone can try the app without their own images. Samples are never shared for model improvement, and the dataset label is revealed only after the analysis.
+
+The images come from the public pediatric chest X-ray dataset:
+
+> Kermany, D. S., et al. (2018). *Identifying medical diagnoses and treatable diseases by image-based deep learning.* Cell, 172(5), 1122-1131. Data: Mendeley Data, doi:10.17632/rscbjbr9sj.2. Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
