@@ -1,90 +1,67 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Brain, HeartPulse, History as HistoryIcon, ShieldCheck } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 import { Background } from "../components/ui.jsx";
 import Footer from "../components/Footer.jsx";
+import { Hero, Marquee } from "../components/welcome/Hero.jsx";
+import { Features, HowItWorks, PrivacyDemo } from "../components/welcome/Story.jsx";
+import { Faq, FinalCta, Roles, Stats } from "../components/welcome/Trust.jsx";
+import { useAuth } from "../lib/auth.jsx";
 
-const features = [
-  { icon: Brain, title: "Second-reader AI", text: "ResNet50 fine-tuned for pediatric chest X-rays." },
-  { icon: ShieldCheck, title: "Explainable", text: "Grad-CAM heatmaps show what influenced the model." },
-  { icon: HistoryIcon, title: "Your private history", text: "Revisit every saved analysis, any time." },
-];
+function TopBar() {
+  const { user } = useAuth();
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+        <Link to="/welcome" className="flex items-center gap-3">
+          <div className="btn-primary grid h-9 w-9 place-items-center rounded-xl">
+            <HeartPulse size={18} />
+          </div>
+          <span className="font-semibold">Second Reader</span>
+        </Link>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <Link to="/dashboard" className="btn-primary rounded-xl px-5 py-2 text-sm">
+              Open dashboard
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="rounded-xl px-4 py-2 text-sm text-slate-300 transition hover:text-white">
+                Sign in
+              </Link>
+              <Link to="/signup" className="btn-primary rounded-xl px-5 py-2 text-sm">
+                Get started
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
 
 export default function Welcome() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28 });
+
   return (
-    <div className="bg-aurora relative min-h-screen overflow-hidden px-6 py-14">
+    <div className="bg-aurora relative min-h-screen overflow-x-hidden">
       <Background />
-      <div className="relative z-10 mx-auto max-w-4xl text-center">
-        <motion.div
-          initial={{ scale: 0.7, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 160, damping: 14 }}
-          className="btn-primary mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl"
-        >
-          <HeartPulse size={38} />
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="text-4xl font-semibold tracking-tight md:text-5xl"
-        >
-          A clinical <span className="text-gradient">second reader</span> for pediatric chest X-rays
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
-          className="mx-auto mt-4 max-w-xl text-[var(--muted)]"
-        >
-          Upload an X-ray, get a pneumonia assessment with an explanation, and keep your own
-          private history of every analysis.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 flex flex-wrap justify-center gap-3"
-        >
-          <Link to="/signup">
-            <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} className="btn-primary inline-block rounded-xl px-7 py-3">
-              Get started
-            </motion.span>
-          </Link>
-          <Link to="/login">
-            <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} className="glass inline-block px-7 py-3 font-medium">
-              Sign in
-            </motion.span>
-          </Link>
-        </motion.div>
-
-        <div className="mt-14 grid gap-4 md:grid-cols-3">
-          {features.map(({ icon: Icon, title, text }, i) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65 + i * 0.12 }}
-              whileHover={{ y: -6 }}
-              className="glass glow-card p-6 text-left"
-            >
-              <div className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-white/10">
-                <Icon size={22} className="text-sky-300" />
-              </div>
-              <p className="font-semibold">{title}</p>
-              <p className="mt-1 text-sm text-[var(--muted)]">{text}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <p className="mt-10 text-xs text-[var(--muted)]">
-          Research prototype. Not a certified medical device. Not for unreviewed clinical use.
-        </p>
-      </div>
-
-      <div className="relative z-10 -mx-6 -mb-14 mt-14">
+      <motion.div
+        style={{ scaleX, transformOrigin: "0% 50%" }}
+        className="btn-primary fixed inset-x-0 top-0 z-50 h-1"
+      />
+      <div className="relative z-10">
+        <TopBar />
+        <Hero />
+        <Marquee />
+        <HowItWorks />
+        <Features />
+        <PrivacyDemo />
+        <Stats />
+        <Roles />
+        <Faq />
+        <FinalCta />
         <Footer />
       </div>
     </div>

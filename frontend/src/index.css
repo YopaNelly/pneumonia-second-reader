@@ -133,3 +133,15 @@ body {
 html, body {
   overflow-x: hidden;
 }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee:hover { animation-play-state: paused; }
+.reduce-motion .marquee { animation: none; }

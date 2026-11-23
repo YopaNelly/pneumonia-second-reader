@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ChevronDown, ExternalLink, HeartPulse, Mail } from "lucide-react";
+import { ArrowUp, Brain, Database, HeartPulse, Mail, ShieldCheck } from "lucide-react";
 import { contact } from "../config/contact.js";
 import { useAuth } from "../lib/auth.jsx";
 
@@ -12,167 +11,222 @@ const LINKEDIN =
 const X_LOGO =
   "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z";
 
-function Svg({ d, viewBox }) {
+function Svg({ children, viewBox = "0 0 24 24", ...props }) {
   return (
-    <svg viewBox={viewBox} width="18" height="18" fill="currentColor" aria-hidden="true">
-      <path d={d} />
+    <svg viewBox={viewBox} width="20" height="20" aria-hidden="true" {...props}>
+      {children}
     </svg>
   );
 }
 
-function Letters({ children }) {
-  return <span className="text-xs font-bold">{children}</span>;
-}
+const icons = {
+  github: (
+    <Svg viewBox="0 0 16 16" fill="currentColor">
+      <path d={GITHUB} />
+    </Svg>
+  ),
+  linkedin: (
+    <Svg fill="currentColor">
+      <path d={LINKEDIN} />
+    </Svg>
+  ),
+  x: (
+    <Svg fill="currentColor">
+      <path d={X_LOGO} />
+    </Svg>
+  ),
+  huggingface: (
+    <span className="text-xl leading-none" role="img" aria-label="Hugging Face">
+      🤗
+    </span>
+  ),
+  kaggle: (
+    <Svg fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 4v16" />
+      <path d="M17.5 5.5L9 13" />
+      <path d="M11.5 11l6.5 8.5" />
+    </Svg>
+  ),
+  medium: (
+    <Svg fill="currentColor">
+      <circle cx="7" cy="12" r="5.5" />
+      <ellipse cx="16.5" cy="12" rx="2.8" ry="5.2" />
+      <ellipse cx="21.8" cy="12" rx="1.1" ry="4.6" />
+    </Svg>
+  ),
+  mail: <Mail size={20} />,
+  model: <Brain size={20} />,
+  privacy: <ShieldCheck size={20} />,
+  dataset: <Database size={20} />,
+  techascend: <span className="text-sm font-extrabold tracking-tight">TA</span>,
+};
 
 const social = [
-  { key: "github", label: "GitHub", icon: <Svg viewBox="0 0 16 16" d={GITHUB} /> },
-  { key: "linkedin", label: "LinkedIn", icon: <Svg viewBox="0 0 24 24" d={LINKEDIN} /> },
-  { key: "x", label: "X", icon: <Svg viewBox="0 0 24 24" d={X_LOGO} /> },
-  { key: "huggingface", label: "Hugging Face", icon: <Letters>HF</Letters> },
-  { key: "kaggle", label: "Kaggle", icon: <Letters>K</Letters> },
-  { key: "medium", label: "Medium", icon: <Letters>M</Letters> },
+  { key: "github", label: "GitHub", color: "#e2e8f0" },
+  { key: "linkedin", label: "LinkedIn", color: "#38a3f5" },
+  { key: "x", label: "X", color: "#ffffff" },
+  { key: "huggingface", label: "Hugging Face", color: "#fbbf24" },
+  { key: "kaggle", label: "Kaggle", color: "#20beff" },
+  { key: "medium", label: "Medium", color: "#e2e8f0" },
 ];
 
 const isUrl = (v) => typeof v === "string" && /^https:\/\//i.test(v.trim());
 const isEmail = (v) => typeof v === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
-const linkClass = "inline-flex items-center gap-1.5 transition hover:text-white";
+function IconLink({ href, to, label, color, external = true, children }) {
+  const style = {
+    color: "#cbd5e1",
+    borderColor: "rgba(255,255,255,0.1)",
+    boxShadow: "0 0 0 0 rgba(0,0,0,0)",
+  };
+  const hover = { y: -5, scale: 1.08, color, borderColor: color, boxShadow: `0 12px 30px -10px ${color}` };
+  const cls = "group relative grid h-12 w-12 place-items-center rounded-2xl border bg-white/5";
+  const tip = (
+    <span className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-xs text-white opacity-0 ring-1 ring-white/10 transition group-hover:opacity-100 group-focus-visible:opacity-100">
+      {label}
+    </span>
+  );
 
-function Ext({ href, children }) {
+  if (to) {
+    return (
+      <motion.div whileHover={hover} style={style} className={cls}>
+        <Link to={to} aria-label={label} title={label} className="absolute inset-0 grid place-items-center">
+          {children}
+        </Link>
+        {tip}
+      </motion.div>
+    );
+  }
   return (
-    <li>
-      <a href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>
-        {children}
-        <ExternalLink size={12} />
-      </a>
-    </li>
+    <motion.a
+      whileHover={hover}
+      style={style}
+      className={cls}
+      href={href}
+      aria-label={label}
+      title={label}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {children}
+      {tip}
+    </motion.a>
   );
 }
 
-function Section({ title, children }) {
-  const [open, setOpen] = useState(false);
+function Group({ title, children }) {
   return (
-    <div className="border-b border-white/10 md:border-0">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="flex w-full items-center justify-between py-4 text-left font-semibold md:pointer-events-none md:py-0 md:pb-3"
-      >
-        {title}
-        <motion.span animate={{ rotate: open ? 180 : 0 }} className="text-[var(--muted)] md:hidden">
-          <ChevronDown size={18} />
-        </motion.span>
-      </button>
-      <motion.div
-        key={String(open)}
-        initial={{ opacity: 0, y: -6 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`${open ? "block pb-4" : "hidden"} md:block md:pb-0`}
-      >
-        <ul className="space-y-2.5 text-sm text-[var(--muted)]">{children}</ul>
-      </motion.div>
+    <div className="text-center">
+      <p className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-[var(--muted)]">{title}</p>
+      <div className="flex flex-wrap justify-center gap-3">{children}</div>
     </div>
   );
 }
 
 export default function Footer() {
   const { user } = useAuth();
-  const links = social.filter((s) => isUrl(contact.links[s.key]));
   const email = isEmail(contact.email) ? contact.email.trim() : "";
-  const buttonClass =
-    "grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:border-sky-400/50 hover:bg-sky-400/10 hover:text-white";
+  const links = social.filter((s) => isUrl(contact.links[s.key]));
+  const hasConnect = Boolean(email) || links.length > 0;
 
   return (
-    <footer className="relative z-10 mt-12 border-t border-white/10 bg-black/20 backdrop-blur">
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <div className="grid gap-6 md:grid-cols-[1.5fr_1fr_1fr_1fr] md:gap-8">
-          <div className="pb-2">
-            <div className="flex items-center gap-3">
-              <div className="btn-primary grid h-11 w-11 place-items-center rounded-xl">
-                <HeartPulse size={20} />
-              </div>
-              <div>
-                <p className="font-semibold leading-tight">Second Reader</p>
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-sky-300">
-                  Pneumonia · Pediatric CXR
-                </p>
-              </div>
-            </div>
-            <p className="mt-4 text-sm text-[var(--muted)]">
-              A clinical second reader for pediatric chest X-rays with Grad-CAM explanations. Built
-              by {contact.name}, {contact.role}.
-            </p>
-            {(email || links.length > 0) && (
-              <div className="mt-5 flex flex-wrap gap-3">
-                {email && (
-                  <motion.a whileHover={{ y: -3 }} href={`mailto:${email}`} aria-label="Email" className={buttonClass}>
-                    <Mail size={18} />
-                  </motion.a>
-                )}
-                {links.map((s) => (
-                  <motion.a
-                    key={s.key}
-                    whileHover={{ y: -3 }}
-                    href={contact.links[s.key].trim()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={s.label}
-                    className={buttonClass}
-                  >
-                    {s.icon}
-                  </motion.a>
-                ))}
-              </div>
-            )}
-          </div>
+    <footer className="relative z-10 mt-16 overflow-hidden border-t border-white/10 bg-black/30 backdrop-blur">
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2 }}
+        style={{
+          transformOrigin: "50% 50%",
+          background: "linear-gradient(90deg, transparent, #38bdf8, #818cf8, #34d399, transparent)",
+        }}
+        className="absolute inset-x-0 top-0 h-px"
+      />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-[40rem] max-w-full -translate-x-1/2 rounded-full bg-sky-400/10 blur-3xl" />
 
-          <Section title="Project">
-            {user && (
-              <>
-                <li>
-                  <Link to="/model-card" className={linkClass}>Model card</Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className={linkClass}>Privacy and data</Link>
-                </li>
-              </>
-            )}
-            {isUrl(contact.repo) && <Ext href={contact.repo}>Source code</Ext>}
-          </Section>
-
-          <Section title="Resources">
-            <Ext href="https://data.mendeley.com/datasets/rscbjbr9sj/2">Dataset (Kermany et al., CC BY 4.0)</Ext>
-            <Ext href="https://www.tech-ascend.com">TechAscend</Ext>
-          </Section>
-
-          <Section title="Contact">
-            {email && (
-              <li>
-                <a href={`mailto:${email}`} className={linkClass}>
-                  <Mail size={13} /> {email}
-                </a>
-              </li>
-            )}
-            {links.map((s) => (
-              <Ext key={s.key} href={contact.links[s.key].trim()}>
-                {s.label}
-              </Ext>
-            ))}
-            {!email && links.length === 0 && <li>Contact details coming soon.</li>}
-          </Section>
+      <div className="relative mx-auto max-w-5xl px-4 py-12">
+        <div className="text-center">
+          <motion.div
+            whileHover={{ rotate: 8, scale: 1.08 }}
+            className="btn-primary relative mx-auto grid h-14 w-14 place-items-center rounded-2xl"
+          >
+            <motion.span
+              className="absolute inset-0 rounded-2xl ring-2 ring-sky-300/50"
+              animate={{ scale: [1, 1.45], opacity: [0.6, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+            />
+            <HeartPulse size={26} />
+          </motion.div>
+          <p className="mt-4 text-xl font-semibold">Second Reader</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-sky-300">
+            Pneumonia · Pediatric CXR
+          </p>
+          <p className="mx-auto mt-3 max-w-md text-sm text-[var(--muted)]">
+            Built by {contact.name}, {contact.role}.
+          </p>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-[var(--muted)]">
-          <p>
-            © {new Date().getFullYear()} {contact.name}. Research prototype, not a certified medical device.
-          </p>
-          {user && (
-            <div className="flex gap-4">
-              <Link to="/privacy" className="transition hover:text-white">Privacy and data</Link>
-              <Link to="/model-card" className="transition hover:text-white">Model card</Link>
-            </div>
+        <div className="mt-10 flex flex-wrap justify-center gap-x-14 gap-y-10">
+          {hasConnect && (
+            <Group title="Connect">
+              {email && (
+                <IconLink href={`mailto:${email}`} label={email} color="#38bdf8" external={false}>
+                  {icons.mail}
+                </IconLink>
+              )}
+              {links.map((s) => (
+                <IconLink key={s.key} href={contact.links[s.key].trim()} label={s.label} color={s.color}>
+                  {icons[s.key]}
+                </IconLink>
+              ))}
+            </Group>
           )}
+
+          <Group title="Project">
+            {isUrl(contact.repo) && (
+              <IconLink href={contact.repo} label="Source code" color="#e2e8f0">
+                {icons.github}
+              </IconLink>
+            )}
+            {user && (
+              <>
+                <IconLink to="/model-card" label="Model card" color="#38bdf8">
+                  {icons.model}
+                </IconLink>
+                <IconLink to="/privacy" label="Privacy and data" color="#34d399">
+                  {icons.privacy}
+                </IconLink>
+              </>
+            )}
+          </Group>
+
+          <Group title="Resources">
+            <IconLink href="https://data.mendeley.com/datasets/rscbjbr9sj/2" label="Dataset (Kermany et al., CC BY 4.0)" color="#34d399">
+              {icons.dataset}
+            </IconLink>
+            <IconLink href="https://www.tech-ascend.com" label="TechAscend" color="#818cf8">
+              {icons.techascend}
+            </IconLink>
+          </Group>
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <motion.button
+            type="button"
+            whileHover={{ y: -4 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Back to top"
+            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:border-sky-400/50 hover:text-white"
+          >
+            <ArrowUp size={18} />
+          </motion.button>
+        </div>
+
+        <div className="mt-8 border-t border-white/10 pt-6 text-center text-xs text-[var(--muted)]">
+          <p>
+            © {new Date().getFullYear()} {contact.name}
+          </p>
+          <p className="mt-1">Research prototype. Not a certified medical device. Not for unreviewed clinical use.</p>
         </div>
       </div>
     </footer>
