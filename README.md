@@ -262,7 +262,7 @@ Each page is one file in `frontend/src/pages/`, and the route list lives in `fro
 - The Grad-CAM heatmap shows what influenced the model. It does not localize disease.
 - The reports page describes only reviewed cases. Users choose which cases to share and labels come from few reviewers, so it is not a validation of the model. The held-out test set above remains the performance estimate.
 - The decision threshold (0.50) was chosen on validation data. Changing it changes the sensitivity and specificity trade-off and needs fresh validation, which is why it is not adjustable in the app.
-- The ML service currently runs on the same machine as the API. Hosting it in the cloud is future work.
+- The frontend runs on Vercel, the API runs on Railway, and the ML inference service currently runs on the presenter's machine via a Cloudflare tunnel. Fully hosting the ML service in the cloud is future work.
 
 ## Status
 
