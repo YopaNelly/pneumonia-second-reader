@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Brain, HeartPulse, History as HistoryIcon, ShieldCheck } from "lucide-react";
 import { Background } from "../components/ui.jsx";
+import Footer from "../components/Footer.jsx";
 
 const features = [
   { icon: Brain, title: "Second-reader AI", text: "ResNet50 fine-tuned for pediatric chest X-rays." },
@@ -81,6 +82,10 @@ export default function Welcome() {
         <p className="mt-10 text-xs text-[var(--muted)]">
           Research prototype. Not a certified medical device. Not for unreviewed clinical use.
         </p>
+      </div>
+
+      <div className="relative z-10 -mx-6 -mb-14 mt-14">
+        <Footer />
       </div>
     </div>
   );

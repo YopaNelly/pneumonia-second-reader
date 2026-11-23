@@ -117,7 +117,7 @@ export default function AdminUsers() {
                   <div className="btn-primary grid h-11 w-11 shrink-0 place-items-center rounded-full">
                     {(u.name || u.email).charAt(0).toUpperCase()}
                   </div>
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-[11rem] flex-1">
                     <p className="flex items-center gap-2 truncate font-medium">
                       {u.name || u.email}
                       {self && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px]">YOU</span>}
@@ -127,12 +127,12 @@ export default function AdminUsers() {
                       {u.last_sign_in_at ? `Last sign-in ${fmtDate(u.last_sign_in_at)}` : "Never signed in"}
                     </p>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${badge[u.role]}`}>{u.role}</span>
+                  <span className={`hidden rounded-full px-3 py-1 text-xs font-semibold capitalize sm:inline-block ${badge[u.role]}`}>{u.role}</span>
                   <select
                     value={u.role}
                     disabled={self || busy === u.id}
                     onChange={(e) => changeRole(u, e.target.value)}
-                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-sky-400 disabled:opacity-40"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-sky-400 disabled:opacity-40 sm:w-auto"
                   >
                     {ROLES.map((r) => (
                       <option key={r.key} value={r.key} className="bg-slate-900">

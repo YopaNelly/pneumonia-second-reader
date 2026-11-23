@@ -1,37 +1,46 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   BarChart3,
-  ScrollText,
-  Users,
+  Brain,
   ClipboardCheck,
   HeartPulse,
   History as HistoryIcon,
   LayoutDashboard,
   LogOut,
+  MoreHorizontal,
   ScanSearch,
+  ScrollText,
   Settings as SettingsIcon,
+  ShieldCheck,
   User,
+  Users,
 } from "lucide-react";
 import { supabase } from "../lib/api.js";
 import { useAuth } from "../lib/auth.jsx";
 import { useSettings } from "../lib/settings.jsx";
 import { useToast } from "../lib/toast.jsx";
 import { Background } from "./ui.jsx";
+import Footer from "./Footer.jsx";
 
 const items = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, mobile: true },
-  { to: "/analyze", label: "Analyze", icon: ScanSearch, mobile: true },
-  { to: "/history", label: "History", icon: HistoryIcon, mobile: true },
-  { to: "/review", label: "Review", icon: ClipboardCheck, mobile: true, roles: ["clinician", "admin"] },
-  { to: "/reports", label: "Reports", icon: BarChart3, mobile: false, roles: ["clinician", "admin"] },
-  { to: "/users", label: "Users", icon: Users, mobile: false, roles: ["admin"] },
-  { to: "/audit", label: "Audit log", icon: ScrollText, mobile: false, roles: ["admin"] },
-  { to: "/profile", label: "Profile", icon: User, mobile: true },
-  { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: false },
-  { to: "/system", label: "System", icon: Activity, mobile: false },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, primary: true },
+  { to: "/analyze", label: "Analyze", icon: ScanSearch, primary: true },
+  { to: "/history", label: "History", icon: HistoryIcon, primary: true },
+  { to: "/review", label: "Review", icon: ClipboardCheck, roles: ["clinician", "admin"] },
+  { to: "/reports", label: "Reports", icon: BarChart3, roles: ["clinician", "admin"] },
+  { to: "/users", label: "Users", icon: Users, roles: ["admin"] },
+  { to: "/audit", label: "Audit log", icon: ScrollText, roles: ["admin"] },
+  { to: "/profile", label: "Profile", icon: User },
+  { to: "/settings", label: "Settings", icon: SettingsIcon },
+  { to: "/system", label: "System", icon: Activity },
+];
+
+const extras = [
+  { to: "/model-card", label: "Model card", icon: Brain },
+  { to: "/privacy", label: "Privacy and data", icon: ShieldCheck },
 ];
 
 function NavItem({ to, label, icon: Icon, compact }) {
@@ -40,7 +49,7 @@ function NavItem({ to, label, icon: Icon, compact }) {
       {({ isActive }) => (
         <div
           className={`relative flex items-center rounded-xl transition ${
-            compact ? "flex-col gap-1 px-2.5 py-2 text-[11px]" : "gap-3 px-4 py-3"
+            compact ? "flex-col gap-1 px-4 py-2 text-[11px]" : "gap-3 px-4 py-3"
           } ${isActive ? "text-white" : "text-[var(--muted)] hover:text-white"}`}
         >
           {isActive && (
@@ -65,8 +74,15 @@ export default function Layout() {
   const navigate = useNavigate();
   const toast = useToast();
   const [confirmOut, setConfirmOut] = useState(false);
+  const [more, setMore] = useState(false);
   const name = user?.user_metadata?.full_name || user?.email || "";
   const nav = items.filter((i) => !i.roles || i.roles.includes(role));
+  const sheet = [...nav.filter((i) => !i.primary), ...extras];
+  const moreActive = sheet.some((i) => pathname.startsWith(i.to));
+
+  useEffect(() => {
+    setMore(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!settings.autoLogout) return;
@@ -135,17 +151,6 @@ export default function Layout() {
       </aside>
 
       <main className="relative z-10 md:pl-64">
-        <div className="flex justify-end gap-2 px-4 pt-4 md:hidden">
-          <Link to="/settings" className="glass flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--muted)]">
-            <SettingsIcon size={14} /> Settings
-          </Link>
-          <button
-            onClick={() => setConfirmOut(true)}
-            className="glass flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--muted)]"
-          >
-            <LogOut size={14} /> Sign out
-          </button>
-        </div>
         <motion.div
           key={pathname}
           initial={{ opacity: 0, y: 14 }}
@@ -155,15 +160,106 @@ export default function Layout() {
         >
           <Outlet />
         </motion.div>
+        <div className="pb-24 md:pb-0">
+          <Footer />
+        </div>
       </main>
 
-      <nav className="glass fixed inset-x-3 bottom-3 z-20 flex justify-around p-1 md:hidden">
-        {nav
-          .filter((i) => i.mobile)
+      <nav className="glass fixed inset-x-3 bottom-3 z-30 flex justify-around p-1 md:hidden">
+        {items
+          .filter((i) => i.primary)
           .map((i) => (
             <NavItem key={i.to} {...i} compact />
           ))}
+        <button
+          onClick={() => setMore(true)}
+          className={`relative flex flex-col items-center gap-1 rounded-xl px-4 py-2 text-[11px] transition ${
+            moreActive ? "text-white" : "text-[var(--muted)]"
+          }`}
+        >
+          {moreActive && (
+            <motion.span
+              layoutId="pill-mobile"
+              className="absolute inset-0 rounded-xl bg-white/10 ring-1 ring-white/10"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
+          )}
+          <MoreHorizontal size={20} className="relative" />
+          <span className="relative font-medium">More</span>
+        </button>
       </nav>
+
+      <AnimatePresence>
+        {more && (
+          <div className="fixed inset-0 z-40 md:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setMore(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="glass absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto p-5 pb-8"
+              style={{ borderRadius: "1.5rem 1.5rem 0 0", background: "rgba(10,16,30,0.97)" }}
+            >
+              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20" />
+
+              <div className="mb-4 flex items-center gap-3">
+                <div className="btn-primary grid h-10 w-10 shrink-0 place-items-center rounded-full">
+                  {name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{name}</p>
+                  {role && <p className="text-xs capitalize text-[var(--muted)]">{role}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {sheet.map(({ to, label, icon: Icon }, i) => (
+                  <motion.div
+                    key={to}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.04 * i }}
+                  >
+                    <NavLink
+                      to={to}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 rounded-2xl border p-3 text-sm transition ${
+                          isActive
+                            ? "border-sky-400/50 bg-sky-400/10 text-white"
+                            : "border-white/10 bg-white/5 text-slate-300"
+                        }`
+                      }
+                    >
+                      <Icon size={18} className="shrink-0 text-sky-300" />
+                      <span className="font-medium">{label}</span>
+                    </NavLink>
+                  </motion.div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  setMore(false);
+                  setConfirmOut(true);
+                }}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white/5 py-3 text-sm text-[var(--muted)]"
+              >
+                <LogOut size={16} /> Sign out
+              </button>
+              <p className="mt-3 text-center text-xs text-[var(--muted)]">
+                Research prototype. Not a medical device.
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {confirmOut && (

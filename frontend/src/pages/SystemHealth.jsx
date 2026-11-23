@@ -66,7 +66,7 @@ export default function SystemHealth() {
       {!state ? (
         <div className="space-y-4">
           <Skeleton className="h-20" />
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {[0, 1, 2].map((i) => (
               <Skeleton key={i} className="h-28" />
             ))}
@@ -91,7 +91,7 @@ export default function SystemHealth() {
             </div>
           </motion.div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             {rows.map(({ icon: Icon, title, ok, text }, i) => (
               <motion.div
                 key={title}
@@ -110,7 +110,7 @@ export default function SystemHealth() {
             ))}
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="glass flex items-center gap-4 p-5">
               <Timer size={20} className="text-sky-300" />
               <div>
