@@ -17,6 +17,8 @@ import CaseReport from "./pages/CaseReport.jsx";
 import ReviewQueue from "./pages/ReviewQueue.jsx";
 import ReviewCase from "./pages/ReviewCase.jsx";
 import Reports from "./pages/Reports.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
+import AuditLog from "./pages/AuditLog.jsx";
 import Profile from "./pages/Profile.jsx";
 import Settings from "./pages/Settings.jsx";
 import SystemHealth from "./pages/SystemHealth.jsx";
@@ -53,6 +55,11 @@ export default function App() {
             <Route path="/review" element={<ReviewQueue />} />
             <Route path="/review/:id" element={<ReviewCase />} />
             <Route path="/reports" element={<Reports />} />
+          </Route>
+
+          <Route element={<RoleRoute roles={["admin"]} />}>
+            <Route path="/users" element={<AdminUsers />} />
+            <Route path="/audit" element={<AuditLog />} />
           </Route>
         </Route>
       </Route>

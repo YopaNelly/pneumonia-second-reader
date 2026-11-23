@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   BarChart3,
+  ScrollText,
+  Users,
   ClipboardCheck,
   HeartPulse,
   History as HistoryIcon,
@@ -25,6 +27,8 @@ const items = [
   { to: "/history", label: "History", icon: HistoryIcon, mobile: true },
   { to: "/review", label: "Review", icon: ClipboardCheck, mobile: true, roles: ["clinician", "admin"] },
   { to: "/reports", label: "Reports", icon: BarChart3, mobile: false, roles: ["clinician", "admin"] },
+  { to: "/users", label: "Users", icon: Users, mobile: false, roles: ["admin"] },
+  { to: "/audit", label: "Audit log", icon: ScrollText, mobile: false, roles: ["admin"] },
   { to: "/profile", label: "Profile", icon: User, mobile: true },
   { to: "/settings", label: "Settings", icon: SettingsIcon, mobile: false },
   { to: "/system", label: "System", icon: Activity, mobile: false },

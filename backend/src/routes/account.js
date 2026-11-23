@@ -1,5 +1,6 @@
 const express = require("express");
 const { supabase } = require("../db");
+const { audit } = require("../audit");
 
 const router = express.Router();
 const BUCKET = "xrays";
@@ -62,6 +63,7 @@ router.post("/withdraw-consent", async (req, res, next) => {
       .eq("consent", true)
       .select("id");
     if (error) throw error;
+    if (data.length) await audit(req.user, "consent.withdraw", null, { count: data.length });
     res.json({ withdrawn: data.length });
   } catch (e) {
     next(e);
@@ -70,7 +72,9 @@ router.post("/withdraw-consent", async (req, res, next) => {
 
 router.delete("/data", async (req, res, next) => {
   try {
-    res.json({ deleted: await removeAllForUser(req.user.id) });
+    const deleted = await removeAllForUser(req.user.id);
+    if (deleted) await audit(req.user, "data.delete", null, { count: deleted });
+    res.json({ deleted });
   } catch (e) {
     next(e);
   }
@@ -81,6 +85,11 @@ router.delete("/", async (req, res, next) => {
     const deleted = await removeAllForUser(req.user.id);
     const { error } = await supabase.auth.admin.deleteUser(req.user.id);
     if (error) throw error;
+
+    // Anonymize this person's earlier log entries, then record the deletion without an email.
+    await supabase.from("audit_log").update({ actor_email: null }).eq("actor_id", req.user.id);
+    await audit({ id: req.user.id, email: null }, "account.delete", null, { count: deleted });
+
     res.json({ deleted, account: true });
   } catch (e) {
     next(e);

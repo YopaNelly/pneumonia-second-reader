@@ -10,6 +10,7 @@ const historyRoute = require("./routes/history");
 const reviewRoute = require("./routes/review");
 const reportsRoute = require("./routes/reports");
 const accountRoute = require("./routes/account");
+const adminRoute = require("./routes/admin");
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
@@ -33,6 +34,7 @@ app.use("/api/history", requireAuth, historyRoute);
 app.use("/api/review", reviewRoute);
 app.use("/api/reports", reportsRoute);
 app.use("/api/account", requireAuth, accountRoute);
+app.use("/api/admin", adminRoute);
 
 // Serve the built React app (run `npm run build` in frontend/ first)
 const dist = path.join(__dirname, "..", "..", "frontend", "dist");

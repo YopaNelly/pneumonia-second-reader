@@ -2,6 +2,7 @@ const express = require("express");
 const { supabase } = require("../db");
 const { requireRole } = require("../auth");
 const { signUrls } = require("../urls");
+const { audit } = require("../audit");
 
 const router = express.Router();
 router.use(requireRole("clinician", "admin"));
@@ -86,6 +87,8 @@ router.post("/:id", async (req, res, next) => {
       })
       .eq("id", rec.id);
     if (error) throw error;
+
+    await audit(req.user, "review.submit", rec.id, { label, agreed: rec.predicted_label === label });
 
     res.json({
       confirmed_label: label,
