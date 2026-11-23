@@ -264,6 +264,10 @@ Each page is one file in `frontend/src/pages/`, and the route list lives in `fro
 - The decision threshold (0.50) was chosen on validation data. Changing it changes the sensitivity and specificity trade-off and needs fresh validation, which is why it is not adjustable in the app.
 - The frontend runs on Vercel, the API runs on Railway, and the ML inference service currently runs on the presenter's machine via a Cloudflare tunnel. Fully hosting the ML service in the cloud is future work.
 
+## Live Demo
+- **Application:** https://pneumonia-second-reader.vercel.app
+- **API:** https://pneumonia-second-reader-production.up.railway.app
+
 ## Status
 
 Working prototype. TechAscend Track A capstone.
