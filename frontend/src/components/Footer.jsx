@@ -129,7 +129,7 @@ export default function Footer() {
   const hasConnect = Boolean(email) || links.length > 0;
 
   return (
-    <footer className="relative z-10 mt-16 overflow-hidden border-t border-white/10 bg-black/30 backdrop-blur">
+    <footer className="relative z-10 mt-24 overflow-hidden border-t border-white/10 bg-black/30 backdrop-blur">
       <motion.div
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}

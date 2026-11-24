@@ -150,13 +150,13 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="relative z-10 md:pl-64">
+      <main className="relative z-10 flex min-h-screen flex-col md:pl-64">
         <motion.div
           key={pathname}
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="mx-auto max-w-5xl px-4 pb-28 pt-6 md:pb-10 md:pt-8"
+          className="mx-auto w-full max-w-5xl flex-1 px-4 pb-28 pt-6 md:pb-10 md:pt-8"
         >
           <Outlet />
         </motion.div>
